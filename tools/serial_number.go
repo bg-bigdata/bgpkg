@@ -21,12 +21,11 @@ type SerialNum struct {
 	Max       int           // 几位数
 }
 
-func NewSerialClient(redisClient *redis.Client, key string, max int) SerialNum {
+func NewSerialClient(redisClient *redis.Client, key string, max int) *SerialNum {
 	if max == 0 {
 		max = 5
 	}
-	s := SerialNum{RedisConn: redisClient, Key: key, Max: max}
-	return s
+	return &SerialNum{RedisConn: redisClient, Key: key, Max: max}
 }
 
 func (s SerialNum) GetDayNumber() (no string, err error) {
