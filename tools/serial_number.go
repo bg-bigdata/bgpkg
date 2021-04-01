@@ -17,29 +17,28 @@ import (
 
 type SerialNum struct {
 	RedisConn *redis.Client // redis client
-	Key       string        // redis key
 	Max       int           // 几位数
 }
 
-func NewSerialClient(redisClient *redis.Client, key string, max int) *SerialNum {
+func NewSerialClient(redisClient *redis.Client, max int) *SerialNum {
 	if max == 0 {
 		max = 5
 	}
-	return &SerialNum{RedisConn: redisClient, Key: key, Max: max}
+	return &SerialNum{RedisConn: redisClient, Max: max}
 }
 
-func (s SerialNum) GetDayNumber() (no string, err error) {
+func (s SerialNum) GetDayNumber(key string) (no string, err error) {
 	// 获取key
 	var num int64
-	result, err := s.RedisConn.Get(s.Key).Result()
+	result, err := s.RedisConn.Get(key).Result()
 	if result == "" {
 		// 设置过期时间
 		lastTime, _ := time.Parse("2006-01-02 15:04:05", time.Now().Format("2006-01-02")+" 23:59:59")
 		a := time.Duration(int(lastTime.Unix()) - int(time.Now().Unix()))
 		// 添加key
-		s.RedisConn.Set(s.Key, 0, time.Second*a)
+		s.RedisConn.Set(key, 0, time.Second*a)
 	}
-	num, err = s.RedisConn.Incr(s.Key).Result()
+	num, err = s.RedisConn.Incr(key).Result()
 	if err != nil {
 		return
 	}
