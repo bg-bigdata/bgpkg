@@ -8,7 +8,7 @@
 package response
 
 import (
-	"github.com/bgpkg/errno"
+	"github.com/bg-bigdata/bgpkg/errno"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
